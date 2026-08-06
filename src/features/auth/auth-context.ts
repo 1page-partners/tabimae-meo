@@ -1,5 +1,4 @@
 import { createContext } from 'react'
-import type { Session } from '@supabase/supabase-js'
-
-export type AuthState = { session:Session|null; loading:boolean; signOut:()=>Promise<void> }
-export const AuthContext = createContext<AuthState>({ session:null, loading:true, signOut:async()=>undefined })
+import type { AuthUser } from '../../types/auth.types'
+export type AuthState={user:AuthUser|null;loading:boolean;isAdmin:boolean;isConsultant:boolean;isUser:boolean;signIn:(email:string,password:string)=>Promise<void>;signOut:()=>Promise<void>;switchFacility:(facilityId:string)=>void}
+export const AuthContext=createContext<AuthState>({user:null,loading:true,isAdmin:false,isConsultant:false,isUser:false,signIn:async()=>undefined,signOut:async()=>undefined,switchFacility:()=>undefined})

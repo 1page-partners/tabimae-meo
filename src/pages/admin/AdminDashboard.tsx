@@ -1,0 +1,3 @@
+import { StatCard } from '../../components/layout/RoleLayout'
+import { useAdminOverview } from '../../features/admin/use-admin'
+export default function AdminDashboard(){const {data,isLoading,error}=useAdminOverview();return <section className="role-page"><header><span>ADMIN</span><h1>全体ダッシュボード</h1><p>サービス全体の利用状況を確認します。</p></header>{error&&<p className="data-error">データの取得に失敗しました。</p>}<div className="stat-grid"><StatCard label="登録施設" value={isLoading?'…':data?.facilities??0}/><StatCard label="コンサルタント" value={isLoading?'…':data?.consultants??0}/><StatCard label="施設ユーザー" value={isLoading?'…':data?.users??0}/><StatCard label="口コミ総数" value={isLoading?'…':data?.reviews??0}/></div></section>}

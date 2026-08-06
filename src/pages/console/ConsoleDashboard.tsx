@@ -1,0 +1,4 @@
+import { ArrowRight, Plus } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useAssignedFacilities } from '../../features/console/use-console'
+export default function ConsoleDashboard(){const {data=[],isLoading}=useAssignedFacilities();return <section className="role-page"><header className="role-heading"><div><span>CONSULTANT</span><h1>担当案件</h1><p>担当している施設の状況を一覧で確認します。</p></div><Link to="/console/facilities/new"><Plus size={15}/>新規施設</Link></header><div className="facility-grid">{isLoading?<p>読み込み中…</p>:data.map(item=><Link to={`/console/${item.id}`} key={item.id}><span className="pill">{item.category||'施設'}</span><h2>{item.name}</h2><p>{item.prefecture||'所在地未設定'}</p><footer>施設を見る<ArrowRight size={14}/></footer></Link>)}{!isLoading&&!data.length&&<div className="empty-card"><h2>担当施設はまだありません</h2><p>新規施設を登録するか、管理者に担当設定を依頼してください。</p></div>}</div></section>}
