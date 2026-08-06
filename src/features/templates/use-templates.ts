@@ -1,0 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '../../lib/supabase'
+import { useAuth } from '../auth/use-auth'
+export type ReplyTemplate={id:string;title:string;content:string;style:'formal'|'warm'|'concise';use_count:number}
+export function useTemplates(){const {user}=useAuth(),facilityId=user?.currentFacilityId;return useQuery({queryKey:['templates',facilityId],enabled:Boolean(facilityId),queryFn:async()=>{const {data,error}=await supabase!.from('reply_templates').select('id,title,content,style,use_count').eq('facility_id',facilityId!).order('updated_at',{ascending:false});if(error)throw error;return data as ReplyTemplate[]}})}
+export function useTemplateMutations(){const {user}=useAuth(),qc=useQueryClient(),facilityId=user?.currentFacilityId;const invalidate=()=>qc.invalidateQueries({queryKey:['templates',facilityId]});return {create:useMutation({mutationFn:async(input:{title:string;content:string;style:ReplyTemplate['style']})=>{if(!facilityId)throw new Error('施設が選択されていません');const {error}=await supabase!.from('reply_templates').insert({facility_id:facilityId,...input});if(error)throw error},onSuccess:invalidate}),remove:useMutation({mutationFn:async(id:string)=>{const {error}=await supabase!.from('reply_templates').delete().eq('id',id);if(error)throw error},onSuccess:invalidate})}}

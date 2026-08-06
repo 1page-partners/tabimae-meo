@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { scoreTrend } from '../mocks/dashboard'
 import { calculateMEOScore } from '../features/meo-score/calculate'
-import { useReviews } from '../features/reviews/review-store'
+import { useReviewsQuery } from '../features/reviews/hooks/use-reviews'
+import { useLatestMEOScore } from '../features/meo-score/use-meo-score'
 
 type MetricProps = { label: string; description: string; value: string; unit?: string; status: string; tone: 'blue' | 'gold' | 'red' | 'green'; icon: typeof Target; change?: string }
 
@@ -16,12 +17,14 @@ function Stars({ value }: { value: number }) {
 }
 
 export default function Index() {
-  const reviews = useReviews()
+  const { data: reviews = [] } = useReviewsQuery()
+  const { data: scoreHistory = [] } = useLatestMEOScore()
   const recentReviews = reviews.slice(0, 3)
   const repliedCount = reviews.filter(review => review.replied).length
   const replyRate = reviews.length ? Math.round(repliedCount / reviews.length * 100) : 0
   const averageRating = reviews.length ? reviews.reduce((total, review) => total + review.rating, 0) / reviews.length : 0
-  const meoScore = calculateMEOScore({ replyRate, avgRating: averageRating, monthlyPosts: 2, searchViews: 2340 })
+  const latestScore = scoreHistory[0]
+  const meoScore = latestScore?.score ?? calculateMEOScore({ replyRate, avgRating: averageRating, monthlyPosts: 0, searchViews: 0 })
   return <div className="dashboard">
     <header className="page-heading"><p>2026年8月6日 ・ 箱根温泉旅館 月の宿</p><h1>おはようございます</h1><span>今日もお客様とのつながりを育てましょう。</span></header>
 
