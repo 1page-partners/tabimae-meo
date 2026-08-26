@@ -1,2 +1,2 @@
 import { RoleLayout } from './RoleLayout'
-export function AdminLayout(){return <RoleLayout title="MEO Admin" links={[{to:'/admin',label:'全体ダッシュボード'},{to:'/admin/consultants',label:'コンサルタント'},{to:'/admin/facilities',label:'全施設'},{to:'/admin/users',label:'ユーザー管理'}]}/>}
+export function AdminLayout(){return <RoleLayout title="MEO Admin" links={[{to:'/admin',label:'全体ダッシュボード'},{to:'/admin/consultants',label:'コンサルタント'},{to:'/admin/facilities',label:'全施設'},{to:'/admin/sample-facility',label:'サンプル施設を見る'},{to:'/admin/users',label:'ユーザー管理'}]}/>}

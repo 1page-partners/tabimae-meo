@@ -21,11 +21,12 @@ import ConsoleDashboard from './pages/console/ConsoleDashboard'
 import ConsoleFacilityDetail from './pages/console/ConsoleFacilityDetail'
 import ConsoleFacilityNew from './pages/console/ConsoleFacilityNew'
 import ConsoleOnboarding from './pages/console/ConsoleOnboarding'
+import SampleFacility from './pages/shared/SampleFacility'
 
 export default function App(){return <Routes>
   <Route path="login" element={<Login/>}/><Route path="terms" element={<Legal kind="terms"/>}/><Route path="privacy" element={<Legal kind="privacy"/>}/>
   <Route element={<UserGuard/>}><Route path="onboarding" element={<Onboarding/>}/><Route element={<OnboardingGuard/>}><Route element={<AppLayout/>}><Route index element={<Index/>}/><Route path="reviews" element={<Reviews/>}/><Route path="reviews/:id" element={<AIReply/>}/><Route path="templates" element={<Templates/>}/><Route path="posts" element={<Posts/>}/><Route path="concierge" element={<Concierge/>}/><Route path="settings" element={<Settings/>}/></Route></Route></Route>
-  <Route path="admin" element={<AdminGuard/>}><Route element={<AdminLayout/>}><Route index element={<AdminDashboard/>}/><Route path="consultants" element={<AdminConsultants/>}/><Route path="facilities" element={<AdminFacilities/>}/><Route path="facilities/:facilityId" element={<ConsoleFacilityDetail/>}/><Route path="users" element={<AdminUsers/>}/></Route></Route>
-  <Route path="console" element={<ConsultantGuard/>}><Route element={<ConsoleLayout/>}><Route index element={<ConsoleDashboard/>}/><Route path="facilities/new" element={<ConsoleFacilityNew/>}/><Route path=":facilityId" element={<ConsoleFacilityDetail/>}/><Route path=":facilityId/reviews" element={<ConsoleFacilityDetail/>}/><Route path=":facilityId/onboarding" element={<ConsoleOnboarding/>}/></Route></Route>
+  <Route path="admin" element={<AdminGuard/>}><Route element={<AdminLayout/>}><Route index element={<AdminDashboard/>}/><Route path="consultants" element={<AdminConsultants/>}/><Route path="facilities" element={<AdminFacilities/>}/><Route path="sample-facility" element={<SampleFacility/>}/><Route path="facilities/:facilityId" element={<ConsoleFacilityDetail/>}/><Route path="users" element={<AdminUsers/>}/></Route></Route>
+  <Route path="console" element={<ConsultantGuard/>}><Route element={<ConsoleLayout/>}><Route index element={<ConsoleDashboard/>}/><Route path="facilities/new" element={<ConsoleFacilityNew/>}/><Route path="sample-facility" element={<SampleFacility/>}/><Route path=":facilityId" element={<ConsoleFacilityDetail/>}/><Route path=":facilityId/reviews" element={<ConsoleFacilityDetail/>}/><Route path=":facilityId/onboarding" element={<ConsoleOnboarding/>}/></Route></Route>
   <Route path="*" element={<Navigate to="/login" replace/>}/>
 </Routes>}
