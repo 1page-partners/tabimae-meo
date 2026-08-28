@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import type { Facility, Profile } from '../../types/database.types'
+import type { UserRole } from '../../types/auth.types'
 
 function requireClient(){if(!supabase)throw new Error('Supabaseが設定されていません');return supabase}
 
@@ -25,4 +26,8 @@ export function useFacilities(){
 export function useInviteConsultant(){
   const queryClient=useQueryClient()
   return useMutation({mutationFn:async(input:{email:string;name:string;password:string})=>{const {data,error}=await requireClient().functions.invoke('invite-consultant',{body:input});if(error)throw error;return data as {user_id:string}},onSuccess:()=>queryClient.invalidateQueries({queryKey:['admin']})})
+}
+export function useSetUserRole(){
+  const queryClient=useQueryClient()
+  return useMutation({mutationFn:async(input:{user_id:string;role:UserRole})=>{const {data,error}=await requireClient().functions.invoke('set-user-role',{body:input});if(error)throw error;return data as {user_id:string;previous_role:UserRole;role:UserRole}},onSuccess:()=>queryClient.invalidateQueries({queryKey:['admin']})})
 }
