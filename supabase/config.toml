@@ -1,0 +1,2 @@
+[functions.gbp-oauth-callback]
+verify_jwt = false

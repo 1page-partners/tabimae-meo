@@ -1,0 +1,2 @@
+import { authorizedUser, clients, cors, json } from '../_shared/gbp-oauth.ts'
+Deno.serve(async request=>{if(request.method==='OPTIONS')return new Response('ok',{headers:cors});try{const{facility_id}=await request.json() as {facility_id:string};const{caller,admin}=clients(request);await authorizedUser(caller,admin,facility_id,true);const{error}=await admin.from('gbp_connections').delete().eq('facility_id',facility_id);if(error)throw error;return json({connected:false})}catch(error){return json({error:error instanceof Error?error.message:'Disconnect failed'},400)}})
