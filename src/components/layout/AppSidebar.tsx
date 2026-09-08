@@ -5,7 +5,7 @@ import { useCurrentFacility } from '../../features/console/use-console'
 
 const nav = [
   { to: '/', label: 'ホーム', sub: '全体の状況をひと目で', icon: Home },
-  { to: '/reviews', label: '口コミ管理', sub: 'お客様の声に返信', icon: Star, badge: 3 },
+  { to: '/reviews', label: '口コミ管理', sub: 'お客様の声に返信', icon: Star },
   { to: '/templates', label: '返信テンプレート', sub: 'よく使う返信を保存', icon: FileText },
   { to: '/posts', label: 'Google投稿', sub: 'お店の最新情報を発信', icon: Send },
   { to: '/concierge', label: 'AIに相談', sub: '集客のヒントを質問', icon: Bot },
