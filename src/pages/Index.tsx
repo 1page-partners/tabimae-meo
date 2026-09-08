@@ -5,6 +5,7 @@ import { scoreTrend } from '../mocks/dashboard'
 import { calculateMEOScore } from '../features/meo-score/calculate'
 import { useReviewsQuery } from '../features/reviews/hooks/use-reviews'
 import { useLatestMEOScore } from '../features/meo-score/use-meo-score'
+import { useCurrentFacility } from '../features/console/use-console'
 
 type MetricProps = { label: string; description: string; value: string; unit?: string; status: string; tone: 'blue' | 'gold' | 'red' | 'green'; icon: typeof Target; change?: string }
 
@@ -19,6 +20,7 @@ function Stars({ value }: { value: number }) {
 export default function Index() {
   const { data: reviews = [] } = useReviewsQuery()
   const { data: scoreHistory = [] } = useLatestMEOScore()
+  const { data: facility } = useCurrentFacility()
   const recentReviews = reviews.slice(0, 3)
   const repliedCount = reviews.filter(review => review.replied).length
   const replyRate = reviews.length ? Math.round(repliedCount / reviews.length * 100) : 0
@@ -26,7 +28,7 @@ export default function Index() {
   const latestScore = scoreHistory[0]
   const meoScore = latestScore?.score ?? calculateMEOScore({ replyRate, avgRating: averageRating, monthlyPosts: 0, searchViews: 0 })
   return <div className="dashboard">
-    <header className="page-heading"><p>2026年8月6日 ・ 箱根温泉旅館 月の宿</p><h1>おはようございます</h1><span>今日もお客様とのつながりを育てましょう。</span></header>
+    <header className="page-heading"><p>{new Date().toLocaleDateString('ja-JP')} ・ {facility?.name??'施設情報を読み込み中'}</p><h1>おはようございます</h1><span>今日もお客様とのつながりを育てましょう。</span></header>
 
     <section className="action-panel"><div className="action-summary"><span className="spark"><Sparkles size={22} /></span><div><p>今日のお店の状態</p><h2>おおむね良好です</h2></div><p className="summary-copy">Googleでの評価は安定しています。まずは、まだ返信できていない<strong>3件の口コミ</strong>に対応しましょう。</p></div><div className="today-tasks"><h3>今日やること</h3><Link to="/reviews"><span className="task-dot urgent" /><span>未返信の口コミ3件に返信する</span><ArrowRight size={16} /></Link><Link to="/posts"><span className="task-dot" /><span>今月のGoogle投稿を作る</span><ArrowRight size={16} /></Link><div className="completed"><span className="task-dot done"><Check size={12} /></span><span>お店の写真を追加する</span><small>完了</small></div></div></section>
 
