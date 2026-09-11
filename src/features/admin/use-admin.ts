@@ -34,6 +34,10 @@ export function useInviteConsultant(){
   const queryClient=useQueryClient()
   return useMutation({mutationFn:async(input:{email:string;name:string;password:string})=>{const {data,error}=await requireClient().functions.invoke('invite-consultant',{body:input});if(error)throw error;return data as {user_id:string}},onSuccess:()=>queryClient.invalidateQueries({queryKey:['admin']})})
 }
+export function useDeleteConsultant(){
+  const queryClient=useQueryClient()
+  return useMutation({mutationFn:async(userId:string)=>{const{data,error}=await requireClient().functions.invoke('delete-consultant',{body:{user_id:userId}});if(error)throw new Error((data as{error?:string})?.error??error.message);return data as{deleted_user_id:string}},onSuccess:async()=>{await Promise.all([queryClient.invalidateQueries({queryKey:['admin']}),queryClient.invalidateQueries({queryKey:['admin','facility-consultants']})])}})
+}
 export function useSetUserRole(){
   const queryClient=useQueryClient()
   return useMutation({mutationFn:async(input:{user_id:string;role:UserRole})=>{const {data,error}=await requireClient().functions.invoke('set-user-role',{body:input});if(error)throw error;return data as {user_id:string;previous_role:UserRole;role:UserRole}},onSuccess:()=>queryClient.invalidateQueries({queryKey:['admin']})})
