@@ -10,6 +10,7 @@ import Legal from './pages/Legal'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import Magazine from './pages/Magazine'
 import Onboarding from './pages/Onboarding'
 import Posts from './pages/Posts'
 import Reviews from './pages/Reviews'
@@ -21,6 +22,7 @@ import AdminFacilities from './pages/admin/AdminFacilities'
 import AdminFacilityConsultants from './pages/admin/AdminFacilityConsultants'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminTips from './pages/admin/AdminTips'
+import AdminMagazine from './pages/admin/AdminMagazine'
 import ConsoleDashboard from './pages/console/ConsoleDashboard'
 import ConsoleFacilityDetail from './pages/console/ConsoleFacilityDetail'
 import ConsoleFacilityReviews from './pages/console/ConsoleFacilityReviews'
@@ -32,8 +34,8 @@ import SampleFacility from './pages/shared/SampleFacility'
 
 export default function App(){return <Routes>
   <Route path="login" element={<Login/>}/><Route path="forgot-password" element={<ForgotPassword/>}/><Route path="reset-password" element={<ResetPassword/>}/><Route path="terms" element={<Legal kind="terms"/>}/><Route path="privacy" element={<Legal kind="privacy"/>}/>
-  <Route element={<UserGuard/>}><Route path="onboarding" element={<Onboarding/>}/><Route element={<OnboardingGuard/>}><Route element={<AppLayout/>}><Route index element={<Index/>}/><Route path="reviews" element={<Reviews/>}/><Route path="reviews/:id" element={<AIReply/>}/><Route path="templates" element={<Templates/>}/><Route path="posts" element={<Posts/>}/><Route path="concierge" element={<Concierge/>}/><Route path="settings" element={<Settings/>}/></Route></Route></Route>
-  <Route path="admin" element={<AdminGuard/>}><Route element={<AdminLayout/>}><Route index element={<AdminDashboard/>}/><Route path="consultants" element={<AdminConsultants/>}/><Route path="facilities" element={<AdminFacilities/>}/><Route path="facilities/new" element={<ConsoleFacilityNew/>}/><Route path="sample-facility" element={<SampleFacility/>}/><Route path="facilities/:facilityId" element={<ConsoleFacilityDetail/>}/><Route path="facilities/:facilityId/workspace" element={<FacilityWorkspace/>}/><Route path="facilities/:facilityId/reviews" element={<ConsoleFacilityReviews/>}/><Route path="facilities/:facilityId/onboarding" element={<ConsoleOnboarding/>}/><Route path="facilities/:facilityId/users" element={<ConsoleFacilityUsers/>}/><Route path="facilities/:facilityId/consultants" element={<AdminFacilityConsultants/>}/><Route path="users" element={<AdminUsers/>}/><Route path="tips" element={<AdminTips/>}/></Route></Route>
+  <Route element={<UserGuard/>}><Route path="onboarding" element={<Onboarding/>}/><Route element={<OnboardingGuard/>}><Route element={<AppLayout/>}><Route index element={<Index/>}/><Route path="reviews" element={<Reviews/>}/><Route path="reviews/:id" element={<AIReply/>}/><Route path="templates" element={<Templates/>}/><Route path="posts" element={<Posts/>}/><Route path="concierge" element={<Concierge/>}/><Route path="magazine" element={<Magazine/>}/><Route path="settings" element={<Settings/>}/></Route></Route></Route>
+  <Route path="admin" element={<AdminGuard/>}><Route element={<AdminLayout/>}><Route index element={<AdminDashboard/>}/><Route path="consultants" element={<AdminConsultants/>}/><Route path="facilities" element={<AdminFacilities/>}/><Route path="facilities/new" element={<ConsoleFacilityNew/>}/><Route path="sample-facility" element={<SampleFacility/>}/><Route path="facilities/:facilityId" element={<ConsoleFacilityDetail/>}/><Route path="facilities/:facilityId/workspace" element={<FacilityWorkspace/>}/><Route path="facilities/:facilityId/reviews" element={<ConsoleFacilityReviews/>}/><Route path="facilities/:facilityId/onboarding" element={<ConsoleOnboarding/>}/><Route path="facilities/:facilityId/users" element={<ConsoleFacilityUsers/>}/><Route path="facilities/:facilityId/consultants" element={<AdminFacilityConsultants/>}/><Route path="users" element={<AdminUsers/>}/><Route path="tips" element={<AdminTips/>}/><Route path="magazine" element={<AdminMagazine/>}/></Route></Route>
   <Route path="console" element={<ConsultantGuard/>}><Route element={<ConsoleLayout/>}><Route index element={<ConsoleDashboard/>}/><Route path="facilities/new" element={<ConsoleFacilityNew/>}/><Route path="sample-facility" element={<SampleFacility/>}/><Route path=":facilityId" element={<ConsoleFacilityDetail/>}/><Route path=":facilityId/workspace" element={<FacilityWorkspace/>}/><Route path=":facilityId/reviews" element={<ConsoleFacilityReviews/>}/><Route path=":facilityId/onboarding" element={<ConsoleOnboarding/>}/><Route path=":facilityId/users" element={<ConsoleFacilityUsers/>}/></Route></Route>
   <Route path="*" element={<Navigate to="/login" replace/>}/>
 </Routes>}

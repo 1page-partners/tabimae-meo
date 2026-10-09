@@ -1,4 +1,4 @@
-import { Bot, FileText, Home, LogOut, MessageSquareText, Send, Settings, Star, X } from 'lucide-react'
+import { Bot, FileText, Home, LogOut, MessageSquareText, Newspaper, Send, Settings, Star, X } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../features/auth/use-auth'
 import { useCurrentFacility } from '../../features/console/use-console'
@@ -9,6 +9,7 @@ const nav = [
   { to: '/templates', label: '返信テンプレート', sub: 'よく使う返信を保存', icon: FileText },
   { to: '/posts', label: 'Google投稿', sub: 'お店の最新情報を発信', icon: Send },
   { to: '/concierge', label: 'AIに相談', sub: '集客のヒントを質問', icon: Bot },
+  { to: '/magazine', label: 'MEOマガジン', sub: '毎月の最新情報を確認', icon: Newspaper },
   { to: '/settings', label: '設定', sub: 'お店の情報・連携', icon: Settings },
 ]
 
