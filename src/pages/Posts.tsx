@@ -2,6 +2,7 @@ import { Image, Plus, Send, Sparkles, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useCurrentFacility } from '../features/console/use-console'
 import { type GBPPost, usePostMutations, usePosts } from '../features/posts/use-posts'
+import { TipsPanel } from '../features/tips/components/TipsPanel'
 
 export default function Posts(){
   const{data:posts=[],isLoading,error}=usePosts(),{data:facility}=useCurrentFacility(),mutations=usePostMutations()
@@ -19,5 +20,6 @@ export default function Posts(){
     {open&&<div className="post-editor"><h2>{editingId?'下書きを編集':'新しい投稿'}</h2><div className="image-placeholder"><Image size={28}/><span>画像アップロードはGBP連携後に利用できます</span></div><input value={title} onChange={e=>setTitle(e.target.value)} placeholder="投稿タイトル"/><textarea rows={6} value={content} onChange={e=>setContent(e.target.value)} placeholder="投稿内容"/>{mutationError&&<p className="data-error">{mutationError.message}</p>}<footer><button disabled={busy||!title.trim()||!content.trim()} onClick={()=>void save(false)}>下書き保存</button><button disabled={busy||!title.trim()||!content.trim()} className="primary-button" onClick={()=>void save(true)}><Send size={15}/>公開する</button></footer></div>}
     {!open&&mutationError&&<p className="data-error">公開できませんでした：{mutationError.message} 下書きは保存されています。</p>}
     <div className="post-list"><h2>これまでの投稿</h2>{isLoading?<p className="loading-row">読み込み中…</p>:posts.map(post=><article key={post.id}><div><span className={`pill ${post.status==='posted'?'green':''}`}>{post.status==='posted'?'公開中':'下書き'}</span><h3>{post.title||'無題の投稿'}</h3><p>{post.content}</p><small>{new Date(post.posted_at??post.created_at).toLocaleDateString('ja-JP')}{post.status==='posted'&&`・${post.views}回表示`}</small></div>{post.status==='draft'&&<div className="post-actions"><button disabled={busy} onClick={()=>edit(post)}>編集</button><button className="primary-button" disabled={busy} onClick={()=>void publish(post)}><Send size={14}/>公開</button><button aria-label={`${post.title??'無題の投稿'}を削除`} disabled={busy} onClick={()=>void remove(post)}><Trash2 size={15}/>削除</button></div>}</article>)}{!isLoading&&!posts.length&&<p className="loading-row">投稿はまだありません。</p>}</div>
+    <TipsPanel title="投稿のコツ" initialCategory="post" limit={3} collapsible/>
   </section>
 }
