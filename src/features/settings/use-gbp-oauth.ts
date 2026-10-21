@@ -1,18 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/use-auth'
-import { supabase } from '../../lib/supabase'
+import { invokeGBP } from './gbp-api'
 
 export type GBPLocation={accountId:string;accountName:string;locationId:string;locationName:string}
 type Status={connected:boolean;locationName?:string;lastSyncedAt?:string;locations:GBPLocation[]}
-function client(){if(!supabase)throw new Error('Supabaseが設定されていません');return supabase}
 
 export function useGBPOAuth(){
   const{user}=useAuth(),facilityId=user?.currentFacilityId,[params,setParams]=useSearchParams(),pendingId=params.get('pending')??undefined,qc=useQueryClient()
-  const status=useQuery({queryKey:['gbp-connection',facilityId,pendingId],enabled:Boolean(facilityId),queryFn:async()=>{const{data,error}=await client().functions.invoke('gbp-oauth-status',{body:{facility_id:facilityId,pending_id:pendingId}});if(error)throw error;return data as Status}})
-  const connect=useMutation({mutationFn:async()=>{if(!facilityId)throw new Error('施設が選択されていません');const{data,error}=await client().functions.invoke('gbp-oauth-start',{body:{facility_id:facilityId}});if(error)throw error;window.location.assign((data as {url:string}).url)}})
-  const finalize=useMutation({mutationFn:async(location:GBPLocation)=>{if(!facilityId||!pendingId)throw new Error('接続情報がありません');const{data,error}=await client().functions.invoke('gbp-oauth-finalize',{body:{facility_id:facilityId,pending_id:pendingId,account_id:location.accountId,location_id:location.locationId}});if(error)throw error;return data},onSuccess:async()=>{setParams({gbp:'connected'},{replace:true});await qc.invalidateQueries({queryKey:['gbp-connection']})}})
-  const disconnect=useMutation({mutationFn:async()=>{if(!facilityId)throw new Error('施設が選択されていません');const{error}=await client().functions.invoke('gbp-disconnect',{body:{facility_id:facilityId}});if(error)throw error},onSuccess:()=>qc.invalidateQueries({queryKey:['gbp-connection']})})
-  const syncReviews=useMutation({mutationFn:async()=>{if(!facilityId)throw new Error('施設が選択されていません');const{data,error}=await client().functions.invoke('fetch-gbp-reviews',{body:{facility_id:facilityId}});if(error)throw error;const{error:scoreError}=await client().functions.invoke('calculate-meo-score',{body:{facility_id:facilityId}});if(scoreError)throw new Error(`口コミは同期しましたが、MEOスコアを更新できませんでした: ${scoreError.message}`);return data as {synced:number}},onSuccess:async()=>{await Promise.all([qc.invalidateQueries({queryKey:['reviews',facilityId]}),qc.invalidateQueries({queryKey:['meo-score',facilityId]})])}})
-  return{status,connect,finalize,disconnect,syncReviews,result:params.get('gbp'),message:params.get('message')}
+  const status=useQuery({queryKey:['gbp-connection',facilityId,pendingId],enabled:Boolean(facilityId),queryFn:async()=>invokeGBP<Status>('gbp-oauth-status',{facility_id:facilityId,pending_id:pendingId})})
+  const connect=useMutation({mutationFn:async()=>{
+    if(!facilityId)throw new Error('施設が選択されていません')
+    const data=await invokeGBP<{url?:string;mock?:boolean}>('gbp-oauth-start',{facility_id:facilityId})
+    if(!data.url)throw new Error('Google認証URLを取得できませんでした')
+    window.location.assign(data.url)
+  }})
+  const finalize=useMutation({mutationFn:async(location:GBPLocation)=>{
+    if(!facilityId||!pendingId)throw new Error('接続情報がありません')
+    return invokeGBP<unknown>('gbp-oauth-finalize',{facility_id:facilityId,pending_id:pendingId,account_id:location.accountId,location_id:location.locationId})
+  },onSuccess:async()=>{setParams({gbp:'connected'},{replace:true});await qc.invalidateQueries({queryKey:['gbp-connection']})}})
+  const disconnect=useMutation({mutationFn:async()=>{if(!facilityId)throw new Error('施設が選択されていません');await invokeGBP<unknown>('gbp-disconnect',{facility_id:facilityId})},onSuccess:()=>qc.invalidateQueries({queryKey:['gbp-connection']})})
+  const syncReviews=useMutation({mutationFn:async()=>{
+    if(!facilityId)throw new Error('施設が選択されていません')
+    const data=await invokeGBP<{synced:number}>('fetch-gbp-reviews',{facility_id:facilityId})
+    try{await invokeGBP<unknown>('calculate-meo-score',{facility_id:facilityId})}
+    catch(error){throw new Error('口コミは同期しましたが、MEOスコアを更新できませんでした: '+(error instanceof Error?error.message:'不明なエラー'),{cause:error})}
+    return data
+  },onSuccess:async()=>{await Promise.all([qc.invalidateQueries({queryKey:['reviews',facilityId]}),qc.invalidateQueries({queryKey:['meo-score',facilityId]})])}})
+  return{status,connect,finalize,disconnect,syncReviews,error:connect.error??finalize.error??disconnect.error??syncReviews.error??status.error,result:params.get('gbp'),message:params.get('message')}
 }
