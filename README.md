@@ -1,5 +1,7 @@
 # タビマエMEO
 
+開発・運用の引き継ぎは [引き継ぎ資料](docs/HANDOFF.md) を参照してください。
+
 ## Monthly magazine cron
 
 `202610090003_monthly_magazine_cron.sql` schedules magazine generation for 09:00 JST on the first day of each month when `pg_cron`, `pg_net`, and Vault are available.
