@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --config vite.config.ts",
+    "build": "tsc -b && vite build --config vite.config.ts",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc -b --pretty false",
     "test": "node --test tests/*.test.mjs",

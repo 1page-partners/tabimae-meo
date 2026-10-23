@@ -42,3 +42,10 @@ npm run check:production
 
 RLSの再検証は `supabase/verify-magazine-rls.sql` を、DB構造を確認した上でSQL Editorから実行します。
 本番DBは手動適用の履歴があるため、Supabaseマイグレーション履歴が空でも「テーブル未作成」と判断しないでください。
+
+## 主要反映の記録
+
+- ソース統合コミット: `da834b9`
+- Netlify公開確認: [Complete magazine infrastructure and consolidate clean handoff](https://app.netlify.com/projects/tabimae-meo/deploys/6adb2a9700f403884ffb7eec)（Published）
+- 整理前のローカル退避先: `.deployment/pre-clean-20261023/`。作業ファイル33件とGit差分を保存。
+- 古い生成済み `vite.config.js` / `.d.ts` は退避し、npmコマンドは `vite.config.ts` を明示します。旧設定の優先読込による本番ビルド差を防ぎます。
