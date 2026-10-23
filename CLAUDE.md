@@ -1,12 +1,14 @@
 # タビマエMEO — CLAUDE.md
 
+最新の本番反映状況と引き継ぎ手順は `docs/HANDOFF.md` を参照してください。以下のPhase一覧は当初の計画であり、現在の未実装一覧ではありません。
+
 ## プロジェクト概要
 
 旅館・ホテル向けGoogleビジネスプロフィール（GBP）管理・MEO特化SaaS。
 AIが口コミへの返信を自動生成し、MEO対策を支援する。
 タビマエマーケコンシェルジュのサブブランドとして展開。
 
-- **リポジトリ**: https://github.com/centrum-k9/tabimae-ai-os.git
+- **リポジトリ**: https://github.com/1page-partners/tabimae-meo.git
 - **Staging**: Lovable Cloud / Netlify（Supabase + auto-deploy）
 - **デザイン参照**: `design/` ディレクトリのモックJSX・スクリーンショット
 

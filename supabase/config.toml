@@ -1,2 +1,8 @@
 [functions.gbp-oauth-callback]
 verify_jwt = false
+
+[functions.generate-magazine]
+verify_jwt = true
+
+[functions.send-magazine]
+verify_jwt = true

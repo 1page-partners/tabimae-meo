@@ -46,25 +46,57 @@ alter table public.meo_magazines enable row level security;
 alter table public.magazine_deliveries enable row level security;
 alter table public.notification_settings enable row level security;
 
-create policy "meo_news_admin_all" on public.meo_news for all
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='meo_news' and policyname='meo_news_admin_all') then
+    create policy "meo_news_admin_all" on public.meo_news for all
   using (public.auth_role() = 'admin') with check (public.auth_role() = 'admin');
-create policy "meo_news_consultant_select" on public.meo_news for select
+  end if;
+end $policy$;
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='meo_news' and policyname='meo_news_consultant_select') then
+    create policy "meo_news_consultant_select" on public.meo_news for select
   using (public.auth_role() = 'consultant');
+  end if;
+end $policy$;
 
-create policy "meo_magazines_admin_all" on public.meo_magazines for all
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='meo_magazines' and policyname='meo_magazines_admin_all') then
+    create policy "meo_magazines_admin_all" on public.meo_magazines for all
   using (public.auth_role() = 'admin') with check (public.auth_role() = 'admin');
-create policy "meo_magazines_consultant_select" on public.meo_magazines for select
+  end if;
+end $policy$;
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='meo_magazines' and policyname='meo_magazines_consultant_select') then
+    create policy "meo_magazines_consultant_select" on public.meo_magazines for select
   using (public.auth_role() = 'consultant');
-create policy "meo_magazines_user_published_select" on public.meo_magazines for select
+  end if;
+end $policy$;
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='meo_magazines' and policyname='meo_magazines_user_published_select') then
+    create policy "meo_magazines_user_published_select" on public.meo_magazines for select
   using (public.auth_role() = 'user' and status = 'published');
+  end if;
+end $policy$;
 
-create policy "magazine_deliveries_admin_all" on public.magazine_deliveries for all
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='magazine_deliveries' and policyname='magazine_deliveries_admin_all') then
+    create policy "magazine_deliveries_admin_all" on public.magazine_deliveries for all
   using (public.auth_role() = 'admin') with check (public.auth_role() = 'admin');
+  end if;
+end $policy$;
 
-create policy "notification_settings_admin_all" on public.notification_settings for all
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='notification_settings' and policyname='notification_settings_admin_all') then
+    create policy "notification_settings_admin_all" on public.notification_settings for all
   using (public.auth_role() = 'admin') with check (public.auth_role() = 'admin');
-create policy "notification_settings_user_own" on public.notification_settings for all
+  end if;
+end $policy$;
+do $policy$ begin
+  if not exists (select 1 from pg_policies where schemaname='public' and tablename='notification_settings' and policyname='notification_settings_user_own') then
+    create policy "notification_settings_user_own" on public.notification_settings for all
   using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+end $policy$;
 
 create index if not exists meo_news_published_idx on public.meo_news (published_at desc);
 create index if not exists meo_magazines_published_idx on public.meo_magazines (status, year desc, month desc);

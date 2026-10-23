@@ -3,7 +3,26 @@ import { supabase } from '../../../lib/supabase'
 import { reviews as mockReviews } from '../../../mocks/reviews'
 import type { Review } from '../types'
 import { useAuth } from '../../auth/use-auth'
+import { getMockReply, saveMockReply } from '../../settings/gbp-mock'
+import { isGBPMockEnabled } from '../../settings/gbp-mode'
 
 function mapReview(row:{id:string;author_name:string;rating:number;posted_at:string;text:string;replied:boolean;reply_text:string|null}):Review{return {id:row.id,author:row.author_name,rating:row.rating,date:row.posted_at.slice(0,10).replaceAll('-','/'),title:row.text.slice(0,36),text:row.text,replied:row.replied,reply:row.reply_text,language:[...row.text].every(character=>character.charCodeAt(0)<128)?'en':'ja'}}
-export function useReviewsQuery(){const {user}=useAuth(),facilityId=user?.currentFacilityId;return useQuery({queryKey:['reviews',facilityId],queryFn:async()=>{if(!supabase||!facilityId)return mockReviews;const {data,error}=await supabase.from('reviews').select('id,author_name,rating,posted_at,text,replied,reply_text').eq('facility_id',facilityId).order('posted_at',{ascending:false});if(error)throw error;return (data??[]).map(mapReview)},enabled:Boolean(facilityId)||!supabase})}
-export function useSaveReply(){const {user}=useAuth(),qc=useQueryClient();return useMutation({mutationFn:async({reviewId,reply,publish}:{reviewId:string;reply:string;publish:boolean})=>{if(!supabase)throw new Error('Supabaseが設定されていません');const {error}=await supabase.from('reviews').update({reply_text:reply}).eq('id',reviewId);if(error)throw error;if(publish){const{data,error:postError}=await supabase.functions.invoke('post-gbp-reply',{body:{review_id:reviewId}});if(postError)throw new Error((data as{error?:string})?.error??postError.message)}return{published:publish}},onSuccess:()=>qc.invalidateQueries({queryKey:['reviews',user?.currentFacilityId]})})}
+export function useReviewsQuery(){const {user}=useAuth(),facilityId=user?.currentFacilityId;return useQuery({queryKey:['reviews',facilityId],queryFn:async()=>{
+  if(isGBPMockEnabled&&facilityId)return mockReviews.map(review=>{const reply=getMockReply(facilityId,review.id);return reply===undefined?review:{...review,reply,replied:Boolean(reply)}})
+  if(!supabase||!facilityId)return mockReviews
+  const {data,error}=await supabase.from('reviews').select('id,author_name,rating,posted_at,text,replied,reply_text').eq('facility_id',facilityId).order('posted_at',{ascending:false})
+  if(error)throw error
+  return (data??[]).map(mapReview)
+},enabled:Boolean(facilityId)||!supabase})}
+export function useSaveReply(){const {user}=useAuth(),qc=useQueryClient();return useMutation({mutationFn:async({reviewId,reply,publish}:{reviewId:string;reply:string;publish:boolean})=>{
+  if(isGBPMockEnabled){
+    if(!user?.currentFacilityId)throw new Error('施設が選択されていません')
+    saveMockReply(user.currentFacilityId,reviewId,reply)
+    return {published:publish}
+  }
+  if(!supabase)throw new Error('Supabaseが設定されていません')
+  const {error}=await supabase.from('reviews').update({reply_text:reply}).eq('id',reviewId)
+  if(error)throw error
+  if(publish){const{data,error:postError}=await supabase.functions.invoke('post-gbp-reply',{body:{review_id:reviewId}});if(postError)throw new Error((data as{error?:string})?.error??postError.message)}
+  return{published:publish}
+},onSuccess:()=>qc.invalidateQueries({queryKey:['reviews',user?.currentFacilityId]})})}

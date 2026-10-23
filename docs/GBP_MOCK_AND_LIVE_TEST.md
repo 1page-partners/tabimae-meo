@@ -8,7 +8,7 @@ Google Business Profile APIには公式サンドボックスがありません�
 
 ## ローカルでモックを試す
 
-1. ローカルの .env.local に VITE_GBP_MOCK=true を設定し、npm run dev を再起動します。このフラグはViteの開発ビルドでのみ有効です。
+1. `npm run dev` を起動します。専用の `/gbp-test` は環境変数の指定なしで利用できます。通常画面も模擬する場合だけ `.env.local` に `VITE_GBP_MOCK=true` を指定して再起動します。このフラグは開発ビルドでのみ有効です。
 2. /gbp-test を開きます。この独立した開発用ページはGoogle・Supabaseの資格情報なしで、模擬接続→施設選択→口コミ同期→解除を操作できます。
 3. 既存の /settings と /reviews でも確認する場合は、Supabaseの開発環境に施設ユーザーでログインします。GBP応答と例示口コミは模擬され、施設情報などGBP以外の画面は従来どおりSupabaseを使います。
 4. 模擬の接続状態と返信は施設IDごとにブラウザーのlocalStorageへ保存されます。投稿の公開は模擬モードで拒否します。

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/use-auth'
 import { invokeGBP } from './gbp-api'
+import { isGBPMockEnabled } from './gbp-mode'
 
 export type GBPLocation={accountId:string;accountName:string;locationId:string;locationName:string}
 type Status={connected:boolean;locationName?:string;lastSyncedAt?:string;locations:GBPLocation[]}
@@ -12,6 +13,7 @@ export function useGBPOAuth(){
   const connect=useMutation({mutationFn:async()=>{
     if(!facilityId)throw new Error('施設が選択されていません')
     const data=await invokeGBP<{url?:string;mock?:boolean}>('gbp-oauth-start',{facility_id:facilityId})
+    if(isGBPMockEnabled){setParams({gbp:'select',pending:'mock-local'},{replace:true});await qc.invalidateQueries({queryKey:['gbp-connection']});return}
     if(!data.url)throw new Error('Google認証URLを取得できませんでした')
     window.location.assign(data.url)
   }})

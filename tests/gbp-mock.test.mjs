@@ -39,3 +39,15 @@ test('local GBP fixture covers facility selection, sync and disconnect without G
   await invokeMockGBP('gbp-disconnect',base,store)
   assert.equal((await invokeMockGBP('gbp-oauth-status',base,store)).connected,false)
 })
+
+test('mock mode bypasses the Supabase Edge Function transport',async()=>{
+  let edgeCalls=0
+  const {invokeGBP}=await load('../src/features/settings/gbp-api.ts',{
+    isGBPMockEnabled:true,
+    invokeMockGBP:async()=>({connected:true,locationName:'模擬旅館'}),
+    supabase:{functions:{invoke:async()=>{edgeCalls++;throw new Error('must not call Edge')}}},
+  })
+  const status=await invokeGBP('gbp-oauth-status',{facility_id:'facility-a'})
+  assert.equal(status.connected,true)
+  assert.equal(edgeCalls,0)
+})

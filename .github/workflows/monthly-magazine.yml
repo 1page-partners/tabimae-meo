@@ -1,0 +1,31 @@
+name: Monthly magazine draft
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: monthly-magazine-generation
+  cancel-in-progress: false
+jobs:
+  generate:
+    if: vars.MAGAZINE_CRON_ENABLED == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Generate monthly draft (does not publish or send)
+        env:
+          SUPABASE_URL: https://tbsuvflalaspjolxegsc.supabase.co
+          SERVICE_ROLE_KEY: ${{ secrets.MAGAZINE_CRON_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SERVICE_ROLE_KEY" ]; then
+            echo 'Set MAGAZINE_CRON_SERVICE_ROLE_KEY in repository Actions secrets before enabling this workflow.'
+            exit 1
+          fi
+          # Do not trace this shell or print request headers.
+          curl --fail-with-body --silent --show-error --max-time 180 \
+            --request POST "$SUPABASE_URL/functions/v1/generate-magazine" \
+            --header "Authorization: Bearer $SERVICE_ROLE_KEY" \
+            --header 'Content-Type: application/json' \
+            --data '{}'

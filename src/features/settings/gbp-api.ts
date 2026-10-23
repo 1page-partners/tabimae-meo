@@ -1,6 +1,9 @@
 import { supabase } from '../../lib/supabase'
+import { invokeMockGBP } from './gbp-mock'
+import { isGBPMockEnabled } from './gbp-mode'
 
 export async function invokeGBP<T>(name:string,body:Record<string,unknown>):Promise<T>{
+  if(isGBPMockEnabled)return await invokeMockGBP(name,body) as T
   if(!supabase)throw new Error('Supabaseが設定されていません')
   const{data,error}=await supabase.functions.invoke(name,{body})
   if(error){

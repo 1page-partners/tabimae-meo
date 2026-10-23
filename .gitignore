@@ -10,3 +10,7 @@ vite.config.d.ts
 .netlify/
 .DS_Store
 Thumbs.db
+
+# Local release snapshots, archives and Supabase CLI metadata
+.deployment/
+supabase/.temp/
