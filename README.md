@@ -2,6 +2,7 @@
 
 旅館・ホテル向けのGBP管理・MEO支援アプリです。
 
+- [新しい開発者・AI開発ツール向け引き継ぎガイド](docs/handover/README.md)（2026年10月25日のコード調査、環境構築・仕様差分・検証範囲）
 - [開発・運用の引き継ぎ資料](docs/HANDOFF.md)
 - [実装・本番検証の記録](docs/RELEASE_CHECKLIST.md)
 - [GBP OAuth設定](docs/GBP_OAUTH_SETUP.md)
